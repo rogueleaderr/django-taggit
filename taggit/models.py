@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+import logging
 
 import django
 from django.contrib.contenttypes.models import ContentType
@@ -9,6 +10,7 @@ from django.template.defaultfilters import slugify as default_slugify
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.utils.encoding import python_2_unicode_compatible
 
+logger = logging.getLogger(__name__)
 
 @python_2_unicode_compatible
 class TagBase(models.Model):
@@ -41,7 +43,7 @@ class TagBase(models.Model):
                     transaction.savepoint_commit(sid, **trans_kwargs)
                     return res
                 except IntegrityError as e:
-                    logger.error(e)
+
                     transaction.savepoint_rollback(sid, **trans_kwargs)
                     self.slug = self.slugify(self.name, i)
         else:
