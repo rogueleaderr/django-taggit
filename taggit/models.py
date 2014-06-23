@@ -9,6 +9,7 @@ from django.db.models.query import QuerySet
 from django.template.defaultfilters import slugify as default_slugify
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.utils.encoding import python_2_unicode_compatible
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
@@ -24,6 +25,10 @@ class TagBase(models.Model):
         abstract = True
 
     def save(self, *args, **kwargs):
+        print "saving", self.name
+        if self.name.lower().strip() in settings.EXCLUDED_TAGS:
+            return
+
         if not self.pk and not self.slug:
             self.slug = self.slugify(self.name)
             from django.db import router
